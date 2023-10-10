@@ -1,0 +1,75 @@
+import streamlit as st
+import openai
+
+openai.api_key = "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"
+
+def answer_questions(input_text):
+    completion = openai.Completion()
+    response = completion.create(
+        model = "text-davinci-002",
+        prompt = input_text,
+        temperature = 0.5,
+        max_tokens = 100,
+        top_p = 0.3,
+        frequency_penalty = 0.5,
+        presence_penalty = 0
+    )
+    answer = response.choices[0].text.strip()
+    return answer
+
+def poem_song(input_text):
+    completion = openai.Completion()
+    response = completion.create(
+        model = "text-davinci-002",
+        prompt = input_text,
+        temperature = 0.5,
+        max_tokens = 300,
+        top_p = 0.3,
+        frequency_penalty = 0.5,
+        presence_penalty = 0
+    )
+    poem = response.choices[0].text.strip()
+    return poem
+
+
+def generate_image(input_text):
+    response = openai.Image.create(
+        prompt = input_text,
+        n=1,
+        size="512x512"
+    )
+    image_url = response['data'][0]['url']
+    return image_url
+
+st.title("TRIAMBAK AI (ASSIGNMENT SOLVER)")
+choice = st.sidebar.selectbox("Select your choice", ["Home","IMAGE","QUESTIONS","POEM/SONG WRITING"])
+with st.expander("About the App"):
+        st.write("This is an app that solves almost every assignment using AI")
+
+if choice == "HOME":
+    st.title("TRIAMBAK AI")
+    with st.expander("About the App"):
+        st.write("This is an app that solves almost every assignment using AI")
+
+elif choice == "IMAGE":
+    st.subheader("Image generation using DALL-E")
+    input_text = st.text_input("Enter your text")
+    if input_text is not None:
+        if st.button("Generate Image"):
+            st.info(input_text)
+            image_url = generate_image(input_text)
+            st.image(image_url)
+
+elif choice == "QUESTIONS":
+    st.subheader("Get the answers using gpt 3.5")
+    input_text = st.text_input("Enter your text")
+    if input_text is not None:
+        if st.button("ANSWER"):
+            st.info(answer_questions(input_text))
+
+elif choice == "POEM/SONG WRITING":
+    st.subheader("Poem/Songs writing using gpt3.5")
+    input_text = st.text_input("Enter your text")
+    if input_text is not None:
+        if st.button("CREATE"):
+            st.info(poem_song(input_text))
